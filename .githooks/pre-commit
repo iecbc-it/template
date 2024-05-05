@@ -1,4 +1,6 @@
 
 #!/usr/bin/env bash
 
-npx validate-branch-name
+npx validate-branch-name -r '^(master|main|prod|develop)$|^(feature|fix|hotfix|release)/.+$'
+
+#  terraform fmt -write=true -recursive

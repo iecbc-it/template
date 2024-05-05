@@ -1,3 +1,4 @@
+# TODO / Improve with supported plugins https://semantic-release.gitbook.io/semantic-release/extending/plugins-list
 branches:
   - name: prod
     type: release
