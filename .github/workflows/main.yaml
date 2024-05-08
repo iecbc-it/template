@@ -6,19 +6,35 @@
 
 ---
 name: main
-run-name: ${{ github.actor }} is Building and Pushing 🚀
+run-name: Running a workflow for ${{ github.actor }}  🚀
 on: [push]
 # env:
+#   AWS_REGION: ${{ vars.AWS_REGION }} # Set via GitHub Secrets and variables on a org level
+#   AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}  # Set via GitHub Secrets and variables on a org level
+#   APP_NAME: ${{ vars.APP_NAME }}        # Set via GitHub Secrets and variables on a repo level
+#   ROLE_ARN: ${{ secrets.ROLE_ARN }}     # Set via GitHub Secrets on a repo level
 jobs:
-  # test:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #   - uses: actions/checkout@v4
-  git-tag-release:
+  test:
     runs-on: ubuntu-latest
-    # needs: test
+    steps:
+    - uses: actions/checkout@v4
+    - uses: azure/setup-helm@v4.2.0
+      with:
+        version: 'latest' # default is latest (stable)
+    - name: Helm Lint
+      run: helm lint helm/ --strict
+    - name: Check if the commit message is properly formatted
+      run: echo TODO Check if the commit message is properly formatted here
+    - name: Other tests
+      run: echo insert other tests here
+    
+  git-tag-release:  
+    runs-on: ubuntu-latest
+    needs: test
     permissions:
       contents: write # to be able to publish a GitHub release
+    outputs:
+      should-run-build: ${{ steps.decision.outputs.should-run-build }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -28,79 +44,91 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "lts/*"
-      - name: Release
+      - name: Release if needed
+        id: decision
+        # env:
+          # GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # TODO / remove this
+        run: |
+          # Check if there are any changes that are relevant for the release
+          output=$(npx semantic-release --dry-run)
+          if echo "$output" | grep -q "Published release"; then
+            npx semantic-release
+            echo "should-run-build=True" >> "$GITHUB_OUTPUT"
+            echo "#### Found features/fixes. Bumping a git tag version! :punch:" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "should-run-build=False" >> "$GITHUB_OUTPUT"
+            echo "#### No features, no fixes. Skipping Build job :police_car:" >> $GITHUB_STEP_SUMMARY
+          fi
+
+
+  build:
+    runs-on: ubuntu-latest
+    needs: git-tag-release
+    if: needs.git-tag-release.outputs.should-run-build == 'True'
+    permissions:
+      contents: read
+      # packages: write
+      id-token: write  # This is required for requesting the JWT
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Fetching Git tags
+        run: |
+          git fetch --tags 
+          COMMIT_TAGS=$(git tag --points-at HEAD)    # Find tags associated with the current commit. Normally there is one tag only.
+          echo "COMMIT_TAGS=$COMMIT_TAGS" >> $GITHUB_ENV
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-region: ${{ vars.AWS_REGION }} # Set via GitHub Secrets and variables on a org level
+          role-to-assume:  ${{ vars.AWS_ROLE_ARN }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Collect Docker Tags
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npx semantic-release
+          REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          REPOSITORY_OWNER_AND_REPO: ${{ github.repository }}
+          REF_NAME: ${{ github.ref_name }}  # This is a branch ot tag name
+        run: |
+            # Initialize the tags with SHA, branch/tag name, and 'latest'
+            APP_NAME=${{ vars.APP_NAME }}
+            TAGS="$REGISTRY/$APP_NAME:${{ github.sha }}"           
+            TAGS="$TAGS,$REGISTRY/$APP_NAME:$REF_NAME" 
+            TAGS="$TAGS,$REGISTRY/$APP_NAME:latest"
 
+            git fetch --tags && echo "fetched tags"
+            COMMIT_TAGS=$(git tag --points-at HEAD)               # Find tags associated with the current commit
+            if [ -n "$COMMIT_TAGS" ]; then
+              for tag in $COMMIT_TAGS; do
+                TAGS="$TAGS,$REGISTRY/$APP_NAME:$tag"
+              done
+            fi
 
-  # build:
-  #   runs-on: ubuntu-latest
-  #   needs: git-tag-release
-  #   permissions:
-  #     contents: read
-  #     packages: write
-  #     id-token: write 
-  #   steps:
-  #     - name: Checkout
-  #       uses: actions/checkout@v4
+            echo Saving Docker tags: $TAGS
+            echo "TAGS=$TAGS" >> $GITHUB_ENV
 
-  #     - name: Extract repository name
-  #       id: repo-name
-  #       run: echo "REPOSITORY_NAME=$(echo $GITHUB_REPOSITORY | cut -d '/' -f 2)" >> $GITHUB_ENV
-
-  #     - name: Set up Docker Buildx
-  #       uses: docker/setup-buildx-action@v3
-
-  #     - name: Assume AWS role with Web Identity Token
-  #       uses: aws-actions/configure-aws-credentials@v4
-  #       with:
-  #         aws-region: ${{ vars.AWS_REGION }}
-  #         # role-to-assume: arn:aws:iam::583764586586:role/github_ecr
-  #         role-to-assume: arn:aws:iam::${{ vars.AWS_ACCOUNT_ID }}:role/github_ecr
-
-  #     - name: Login to Amazon ECR
-  #       id: login-ecr
-  #       uses: aws-actions/amazon-ecr-login@v2
-
-  #     - name: Collect Docker Tags
-  #       env:
-  #         REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-  #         REPOSITORY_OWNER_AND_REPO: ${{ github.repository }}
-  #         REF_NAME: ${{ github.ref_name }}  # This is a branch ot tag name
-  #       run: |
-  #           # Initialize the tags with SHA, branch/tag name, and 'latest'
-  #           APP_NAME=${{ vars.APP_NAME }}
-  #           TAGS="$REGISTRY/$APP_NAME:${{ github.sha }}"           
-  #           TAGS="$TAGS,$REGISTRY/$APP_NAME:$REF_NAME" 
-  #           TAGS="$TAGS,$REGISTRY/$APP_NAME:latest"
-
-  #           git fetch --tags && echo "fetched tags"
-  #           COMMIT_TAGS=$(git tag --points-at HEAD)               # Find tags associated with the current commit
-  #           if [ -n "$COMMIT_TAGS" ]; then
-  #             for tag in $COMMIT_TAGS; do
-  #               TAGS="$TAGS,$REGISTRY/$APP_NAME:$tag"
-  #             done
-  #           fi
-
-  #           echo Saving Docker tags: $TAGS
-  #           echo "TAGS=$TAGS" >> $GITHUB_ENV
-
-  #     - name: Build and push Docker image to ECR
-  #       uses: docker/build-push-action@v5
-  #       with:
-  #         push: true
-  #         tags: ${{ env.TAGS }}
+      - name: Build and push Docker image to ECR
+        uses: docker/build-push-action@v5
+        with:
+          push: true
+          tags: ${{ env.TAGS }}
                 
-  # deploy:
-  #   runs-on: ubuntu-latest
-  #   needs: build
-  #   environment: # https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment
-  #     name: ${{ github.ref_name }}
-  #     url: https://${{ vars.APP_NAME }}.${{ vars.DNS_ZONE }}
-  #   concurrency: ${{ github.ref_name }}
-  #   steps:
-  #   - uses: actions/checkout@v4
-  #   - name: Deploy to EKS # TODO / mofify
-  #     run: echo Deploy to EKS via ArgoCD or ideally apply some logic with APP_VERSION for updating image tag
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment: # https://docs.github.com/en/actions/deployment/targeting-different-environments/using-environments-for-deployment
+      name: ${{ github.ref_name }}
+      url: https://${{ vars.APP_NAME }}.${{ vars.DNS_ZONE }}
+    concurrency: ${{ github.ref_name }}
+    steps:
+    - uses: actions/checkout@v4
+    - name: Deploy to EKS # TODO / mofify
+      run: echo Deploy to EKS via ArgoCD or ideally apply some logic with APP_VERSION for updating image tag
