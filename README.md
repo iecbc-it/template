@@ -18,6 +18,8 @@ Use [this tool](https://githubnext.com/projects/repo-visualization/) to explore 
 - There are TODO comments in the code.
 - Install git hooks. Run this command `git config core.hooksPath .githooks`.
 
+
+
 ### Branching strategy
 - [CI / Trunk Based Development](https://www.youtube.com/watch?v=v4Ijkq6Myfc) - only `main` branch. Good when you are just starting up, need to iterate quickly or you work mostly with senior developers.
 
@@ -29,6 +31,18 @@ Follow [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) to
 - Following this convention, automation will generate `CHANGELOG.md`  automatically.
 - [semver comparsion operators](https://github.com/Masterminds/semver)
 - To trigger a new release without actually making any changes, run `git commit --allow-empty -m "fix: trigger release with empty commit" && git push`
+
+
+#### Configure GPG key if they are requried
+- Install https://gpgtools.org/ 
+- Generate a new key
+- Copy the public key  
+<img src="doc/img/CleanShot 2024-05-16 at 10.56.53@2x.png" alt="Copy key id" align="center" width="800"/>
+- Paste the public key in Github settings  
+<img src="doc/img/CleanShot 2024-05-16 at 10.54.31@2x.png" alt="Copy key id" align="center" width="800"/>
+- Copy key id  
+<img src="doc/img/CleanShot 2024-05-16 at 10.56.53@2x.png" alt="Copy key id" align="center" width="800"/>
+- Run this `git config --global  user.signingkey <key id>`
 
 
 ### Building 🧱
