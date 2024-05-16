@@ -27,5 +27,5 @@ appVersion: "1.16.0"
 dependencies:
   - name: helm-generic-chart
     # alias:  # ! Specify alias /  becomes a subchart's .Chart.Name
-    version: HEAD # Pin version to a git tag
+    version: ">=1.0.0" # Pin version to a git tag
     repository: "oci://249446252531.dkr.ecr.ca-central-1.amazonaws.com" 
