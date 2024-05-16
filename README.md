@@ -17,7 +17,7 @@ Use [this tool](https://githubnext.com/projects/repo-visualization/) to explore 
 ##  Development 🐙
 - There are TODO comments in the code.
 - Install git hooks. Run this command `git config core.hooksPath .githooks`.
-
+- [Configure GPG keys if required](doc/GPG-KEYS.md)
 
 
 ### Branching strategy
@@ -32,17 +32,6 @@ Follow [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) to
 - [semver comparsion operators](https://github.com/Masterminds/semver)
 - To trigger a new release without actually making any changes, run `git commit --allow-empty -m "fix: trigger release with empty commit" && git push`
 
-
-#### Configure GPG key if they are requried
-- Install https://gpgtools.org/ 
-- Generate a new key
-- Copy the public key  
-<img src="doc/img/CleanShot 2024-05-16 at 10.56.53@2x.png" alt="Copy key id" align="center" width="800"/>
-- Paste the public key in Github settings  
-<img src="doc/img/CleanShot 2024-05-16 at 10.54.31@2x.png" alt="Copy key id" align="center" width="800"/>
-- Copy key id  
-<img src="doc/img/CleanShot 2024-05-16 at 10.56.53@2x.png" alt="Copy key id" align="center" width="800"/>
-- Run this `git config --global  user.signingkey <key id>`
 
 
 ### Building 🧱
