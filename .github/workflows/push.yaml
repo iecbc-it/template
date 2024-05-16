@@ -18,16 +18,16 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
-    
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-region: ${{ vars.AWS_REGION }} # Set via GitHub Secrets and variables on a org level
-          role-to-assume:  ${{ vars.AWS_ROLE_ARN }}
+  
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: ${{ vars.AWS_REGION }} # Set via GitHub Secrets and variables on a org level
+        role-to-assume:  ${{ vars.AWS_ROLE_ARN }}
 
-      - name: Login to Amazon ECR
-        id: login-ecr
-        uses: aws-actions/amazon-ecr-login@v2
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
 
     - uses: azure/setup-helm@v4.2.0
       with:
