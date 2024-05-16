@@ -4,6 +4,7 @@ branches:
     type: release
   - name: staging
     prerelease: true
+tagFormat: "${version}" # default is v${version} which is not a valid Helm chart version
 plugins:
   - "@semantic-release/commit-analyzer"
   # - "@semantic-release/release-notes-generator"
