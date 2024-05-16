@@ -5,7 +5,7 @@
 # APP_NAME:        # Set via GitHub Secrets and variables on a repo level
 
 ---
-name: main
+name: Push
 run-name: Running a workflow for ${{ github.actor }}  🚀
 on: [push]
 # env:
