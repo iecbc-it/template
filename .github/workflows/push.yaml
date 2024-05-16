@@ -6,7 +6,7 @@
 
 ---
 name: Push
-run-name: Running a workflow for ${{ github.actor }}  🚀
+run-name: ${{ github.actor }} - ${{ github.event.workflow_run.head_commit.message }} 🏗️
 on: [push]
 # env:
 #   AWS_REGION: ${{ vars.AWS_REGION }} # Set via GitHub Secrets and variables on a org level
