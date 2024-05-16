@@ -6,7 +6,7 @@
 
 ---
 name: Push
-run-name: ${{ github.actor }} - ${{ github.event.workflow_run.head_commit.message }} 🏗️
+run-name: ${{ github.actor }} - ${{ github.event.head_commit.message }} 🏗️
 on: [push]
 # env:
 #   AWS_REGION: ${{ vars.AWS_REGION }} # Set via GitHub Secrets and variables on a org level
@@ -15,6 +15,9 @@ on: [push]
 #   ROLE_ARN: ${{ secrets.ROLE_ARN }}     # Set via GitHub Secrets on a repo level
 jobs:
   test:
+    permissions:
+      contents: read
+      id-token: write  # This is required for requesting the JWT
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v4
