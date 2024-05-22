@@ -41,6 +41,8 @@ jobs:
         helm lint helm/ --strict
     - name: Check if the commit message is properly formatted
       run: echo TODO Check if the commit message is properly formatted here
+    # - name: Run terraform formatting
+    #   run: terraform fmt -recursive  -no-color -check
     - name: Other tests
       run: echo insert other tests here
     
