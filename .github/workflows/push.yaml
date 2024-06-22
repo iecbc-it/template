@@ -9,8 +9,6 @@ name: Push
 run-name: ${{ github.actor }} - ${{ github.event.head_commit.message }} 🏗️
 on: [push]
 # env:
-#   APP_NAME: ${{ vars.APP_NAME }}
-# env:
 #   AWS_REGION: ${{ vars.AWS_REGION }} # Set via GitHub Secrets and variables on a org level
 #   AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}  # Set via GitHub Secrets and variables on a org level
 #   APP_NAME: ${{ vars.APP_NAME }}        # Set via GitHub Secrets and variables on a repo level
@@ -24,15 +22,15 @@ jobs:
     steps:
     - uses: actions/checkout@v4
   
-    # - name: Configure AWS Credentials
-    #   uses: aws-actions/configure-aws-credentials@v4
-    #   with:
-    #     aws-region: ${{ vars.AWS_REGION }} # Set via GitHub Secrets and variables on a org level
-    #     role-to-assume:  ${{ vars.AWS_ECR_ROLE_ARN }}
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v4
+      with:
+        aws-region: ${{ vars.AWS_REGION }} # Set via GitHub Secrets and variables on a org level
+        role-to-assume:  ${{ vars.AWS_ROLE_ARN }}
 
-    # - name: Login to Amazon ECR
-    #   id: login-ecr
-    #   uses: aws-actions/amazon-ecr-login@v2
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v2
 
     - uses: azure/setup-helm@v4.2.0
       with:
@@ -41,6 +39,8 @@ jobs:
       run: |
         helm dependency build helm/
         helm lint helm/ --strict
+    - name: Check if the commit message is properly formatted
+      run: echo TODO Check if the commit message is properly formatted here
     # - name: Run terraform formatting
     #   run: terraform fmt -recursive  -no-color -check
     - name: Other tests
@@ -104,7 +104,7 @@ jobs:
   #       uses: aws-actions/configure-aws-credentials@v4
   #       with:
   #         aws-region: ${{ vars.AWS_REGION }} # Set via GitHub Secrets and variables on a org level
-  #         role-to-assume:  ${{ vars.AWS_ECR_ROLE_ARN }}
+  #         role-to-assume:  ${{ vars.AWS_ROLE_ARN }}
 
   #     - name: Login to Amazon ECR
   #       id: login-ecr
