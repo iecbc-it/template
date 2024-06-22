@@ -21,7 +21,7 @@ Use [this tool](https://githubnext.com/projects/repo-visualization/) to explore 
 
 
 ### Branching strategy 🚨
-This branching strategy will save you save you. 
+This branching strategy will save you. 
 - `number of environments == number of protected branches` e.g. for `prod`, `stg`, `dev` environments, you should have `prod`, `stg`, `dev` branches respectively.
     - Rename `master`/`main` branch to `prod`
 - Do development on `dev` branch. Propagate changes from `dev` -> `stg` -> `prod` branches. CI/CD will deploy to respective environments upon merging. Merging is a deployment trigger.
