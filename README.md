@@ -20,8 +20,16 @@ Use [this tool](https://githubnext.com/projects/repo-visualization/) to explore 
 - [Configure GPG keys if required](doc/GPG-KEYS.md)
 
 
-### Branching strategy
-- [CI / Trunk Based Development](https://www.youtube.com/watch?v=v4Ijkq6Myfc) - only `main` branch. Good when you are just starting up, need to iterate quickly or you work mostly with senior developers.
+### Branching strategy 🚨
+This branching strategy will save you save you. 
+- `number of environments == number of protected branches` e.g. for `prod`, `stg`, `dev` environments, you should have `prod`, `stg`, `dev` branches respectively.
+    - Rename `master`/`main` branch to `prod`
+- Do development on `dev` branch. Propagate changes from `dev` -> `stg` -> `prod` branches. CI/CD will deploy to respective environments upon merging. Merging is a deployment trigger.
+- How to do development on the `dev` branch.
+    - If you have a dev environment per a developer (temporary/disposable environments 😎), do a [Gitflow](https://www.atlassian.com/git/tutorials/comparing-workflows/gitflow-workflow) on a `dev` branch. 
+        - CI/CD should be configured that features branches are deployed to respective personal `dev` environments.
+    - If the `dev` environment is shared for all developers, do a [Trunk Based Development](https://www.youtube.com/watch?v=v4Ijkq6Myfc) on a `dev` branch. Avoid further branching, bug if you do so, do not hold feature branches for long before merging them to `dev` branch.
+
 
 #### Semantic Rleases
 Releases must follow [semantic versioning](https://semver.org/lang/uk/)  
@@ -33,7 +41,6 @@ Follow [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) to
 - To trigger a new release without actually making any changes, run `git commit --allow-empty -m "fix: trigger release with empty commit" && git push`
 
 
-
 ### Building 🧱
 
 ### Deploying 🏋🏼
@@ -42,5 +49,7 @@ Follow [conventional commits](https://www.conventionalcommits.org/en/v1.0.0/) to
 ## Useful links 
 - [.gitignore file generator](https://www.toptal.com/developers/gitignore/)
 - [Markdown table generator](https://www.tablesgenerator.com/markdown_tables)
+- [Kubernetes Manifests Generator](https://k8syaml.com/)
+- [Generate banner online](https://manytools.org/hacker-tools/ascii-banner/)
 
 Enjoy Coding ❤
