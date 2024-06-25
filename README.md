@@ -30,6 +30,11 @@ This branching strategy will save you.
         - CI/CD should be configured that features branches are deployed to respective personal `dev` environments.
     - If the `dev` environment is shared for all developers, do a [Trunk Based Development](https://www.youtube.com/watch?v=v4Ijkq6Myfc) on a `dev` branch. Avoid further branching, bug if you do so, do not hold feature branches for long before merging them to `dev` branch.
 
+This is so called `Environment Branch Model` with one improvement - the default branch is **prod** <s>master</s>.
+
+- Environment branches make it easy for you to separate your in-progress code from your stable code. Using environment branches and deploying from them means you will always know exactly what code is running on your servers in each of your environments.
+- In order to keep your environment branches in sync with the environments, it’s a best practice to only execute a merge into an environment branch at the time you intend to deploy.
+
 
 #### Semantic Rleases
 Releases must follow [semantic versioning](https://semver.org/lang/uk/)  
