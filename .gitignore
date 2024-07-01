@@ -130,7 +130,7 @@ obj/
 
 # Terraform
 *.tfstate
-.terraform*
+.terraform
 
 # Secrets
 .*env
