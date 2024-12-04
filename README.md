@@ -14,6 +14,15 @@ Why you used the technologies you used?
 ## Getting started 🚀 
 
 ##  Development 🐙
+Setup GitHub authentication
+```bash
+brew install gh
+gh auth login
+gh auth setup-git
+git clone <this repo>
+```
+
+### Configuring 
 - There are TODO comments in the code.
 - Install git hooks. Run this command `git config core.hooksPath .githooks`.
 - [Configure GPG keys if required](doc/GPG-KEYS.md)
