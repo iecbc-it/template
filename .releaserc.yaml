@@ -1,12 +1,7 @@
-# TODO / Improve with supported plugins https://semantic-release.gitbook.io/semantic-release/extending/plugins-list
 branches:
   - name: prod
-    type: release
   - name: staging
     prerelease: true
-tagFormat: "${version}" # default is v${version} which is not a valid Helm chart version
+tagFormat: "${version}" # default is v${version} 
 plugins:
   - "@semantic-release/commit-analyzer"
-  # - "@semantic-release/release-notes-generator"
-  # - "@semantic-release/changelog"
-  # - "@semantic-release/github"

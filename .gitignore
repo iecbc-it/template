@@ -130,7 +130,17 @@ obj/
 
 # Terraform
 *.tfstate
-.terraform
+.terraform*/
+.terraform*
+.terraformrc
+*.tfstate
+*.tfstate.backup
+*.tfplan
+*.tfout
+*.secrets
+*secrets.auto.tfvars
 
 # Secrets
 .*env
+
+.DS_Store
