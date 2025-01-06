@@ -128,6 +128,13 @@ gradle-app.setting
 obj/
 .externalNativeBuild
 
+# Python
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+
 # Terraform
 *.tfstate
 .terraform*/

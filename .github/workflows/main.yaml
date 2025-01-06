@@ -1,9 +1,5 @@
 # Uncomment required Jobs and Steps as needed
 
-# AWS_REGION:      # Set via GitHub Secrets and variables on a org level
-# AWS_ACCOUNT_ID:  # Set via GitHub Secrets and variables on a org level
-# APP_NAME:        # Set via GitHub Secrets and variables on a repo level
-
 ---
 name: Push
 run-name: ${{ github.actor }} - ${{ github.event.head_commit.message }} 🏗️
@@ -16,10 +12,10 @@ on:
   schedule: # A regular sync to prevent drifts.
     - cron: "0 8 * * 1" # every day at 8am UTC Monday # https://crontab.guru/#0_8_*_*_*
   workflow_dispatch: {}
-# env:
+env:
+    APP_NAME: ${{ vars.APP_NAME }}        # Set via GitHub Secrets and variables on a repo level
 #   AWS_REGION: ${{ vars.AWS_REGION }} # Set via GitHub Secrets and variables on a org level
 #   AWS_ACCOUNT_ID: ${{ vars.AWS_ACCOUNT_ID }}  # Set via GitHub Secrets and variables on a org level
-#   APP_NAME: ${{ vars.APP_NAME }}        # Set via GitHub Secrets and variables on a repo level
 #   ROLE_ARN: ${{ secrets.ROLE_ARN }}     # Set via GitHub Secrets on a repo level
 jobs:
   tests:
@@ -62,6 +58,7 @@ jobs:
       #   run: terraform fmt -recursive  -check
 
   git-tag-release:
+    name: Create a semanitc git tag if needed
     runs-on: ubuntu-latest
     needs:
       - tests

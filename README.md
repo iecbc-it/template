@@ -12,15 +12,6 @@ Why you used the technologies you used?
 
 ## Getting started 🚀
 
-## Development 🐙
-
-```bash
-brew install gh
-gh auth login
-gh auth setup-git
-gh clone <this repo https url>
-```
-
 ##  Development 🐙
 Setup GitHub authentication
 ```bash
