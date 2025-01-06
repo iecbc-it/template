@@ -1,19 +1,26 @@
-# All possible values are specified here
-global: {} 
+
+global: 
+  datadog:
+    enabled: false
 ## Global values that can be specified here and be applied to all charts:
-  # deployment:
-  #   image:
-  #     repository: 123456721475.dkr.ecr.eu-west-2.amazonaws.com/human-fun-service
-  #     tag: latest
-  # configMap:
-  #   data:
-  # externalSecret:
-  #   awsSecrets:
-  #     mapping:
-  #   awsSsm:
-  #     mapping:
+  deployment:
+    image:
+      repository: ""
+      tag: latest
+    podLabels: {}  # for monitoring and logging
+  configMap:
+    data: {}
+  externalSecret:
+    awsSecrets:
+      mapping: {}
+      prefix: ""
+    awsSsm:
+      mapping: {}
+      prefix: ""
+
 
 helm-generic-chart: # or alias
+
   nameOverride: "" # Takes precedence over .Chart.Name or dependencies[].alias (when this is a subchart).  Impacts resources' `app.kubernetes.io/name` labels.
   fullnameOverride: "" #   If non-empty string, MUST BE UNIQUE ACROSS ALL CHARTS IN THE KUBERNETES CLUSTER. Overrides  .Release.Name . Useful with subcharts. This will become a name for every resource created by the chart if non-empty.
 
@@ -21,6 +28,8 @@ helm-generic-chart: # or alias
 
   deployment: # Currently supports only one container per pod.
     annotations: {}
+      # link.argocd.argoproj.io/external-link: <URL> # A nice feature of ArgoCD https://argo-cd.readthedocs.io/en/stable/user-guide/external-url/
+    podLabels: {} # for monitoring and logging
     replicas: 1
     minReadySeconds: 0 # Kubernetes default is 0
     progressDeadlineSeconds: 300 # Kubernetes defaul to 600s.
@@ -83,6 +92,18 @@ helm-generic-chart: # or alias
           - NET_BIND_SERVICE
 
     podAnnotations: {}
+      # https://docs.datadoghq.com/containers/kubernetes/tag/?tab=datadogoperator#tag-autodiscovery
+      # No need to specify tags.datadoghq.com/version - it is automatically added by the chart
+
+    migrationsJob: # This is a migrations job which runs on `pre-install,pre-upgrade`. The template pod is almost a copy of deployment.
+      create: false
+      image:
+        repostiory: ""
+        tag: ""
+      command: []
+      args: []
+      annotations: {}
+
 
   autoscaling:
     create: false
@@ -114,6 +135,7 @@ helm-generic-chart: # or alias
       annotations:
         argocd.argoproj.io/sync-wave: "-1"
       mountPath: "" # leave empty to mount as env vars
+      prefix: ""
       secretStoreRef: 
         kind: ClusterSecretStore  # or SecretStore
         name: aws-secrets-manager   # must be created in advance
@@ -136,6 +158,7 @@ helm-generic-chart: # or alias
       annotations:
         argocd.argoproj.io/sync-wave: "-1"
       mountPath: "" # leave empty to mount as env vars
+      prefix: ""
       secretStoreRef: 
         kind: ClusterSecretStore  # or SecretStore
         name: aws-ssm-parameter-store   # must be created in advance
@@ -146,22 +169,22 @@ helm-generic-chart: # or alias
     
 
 
-
   service:
+    create: true
     type: ClusterIP
-    port: 80
+    port: 8080
 
   ingress:
     create: false
     className: ""
     annotations: {}
-      # kubernetes.io/ingress.class: nginx
-      # kubernetes.io/tls-acme: "true"
-    hosts:
-      - host: chart-example.local
-        paths:
-          - path: /
-            pathType: ImplementationSpecific
+      # alb.ingress.kubernetes.io/group.name: main
+      # alb.ingress.kubernetes.io/group.order: '10'
+    rules: {}
+      # - host: chart-example.local
+      #   paths:
+      #     - path: /
+      #       pathType: Prefix
     tls: []
     #  - secretName: chart-example-tls
     #    hosts:
