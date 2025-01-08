@@ -178,8 +178,16 @@ helm-generic-chart: # or alias
     create: false
     className: ""
     annotations: {}
+      # alb.ingress.kubernetes.io/backend-protocol: HTTP
       # alb.ingress.kubernetes.io/group.name: main
-      # alb.ingress.kubernetes.io/group.order: '10'
+      # alb.ingress.kubernetes.io/group.order: '1'
+      # alb.ingress.kubernetes.io/ip-address-type: ipv4
+      # alb.ingress.kubernetes.io/listen-ports: '[{"HTTP": 80}, {"HTTPS": 443}]'
+      # alb.ingress.kubernetes.io/load-balancer-name: main
+      # alb.ingress.kubernetes.io/scheme: internet-facing
+      # alb.ingress.kubernetes.io/ssl-redirect: '443'
+      # alb.ingress.kubernetes.io/success-codes: 200-307
+      # alb.ingress.kubernetes.io/target-type: ip
     rules: {}
       # - host: chart-example.local
       #   paths:
