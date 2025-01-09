@@ -1,5 +1,4 @@
 # README
-
 This is a repo template 👨🏼‍🔬
 
 ## Description 🤝
@@ -10,6 +9,7 @@ What problem does it solve?
 What application does?
 Why you used the technologies you used?
 
+* ⚠️ Do not change repo settings manually in UI. It is managged by Terraform, including variables, secrets, environmetns, protected branches etc.  
 ## Getting started 🚀
 
 ##  Development 🐙
