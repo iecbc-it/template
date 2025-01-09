@@ -151,3 +151,5 @@ __pycache__/
 .*env
 
 .DS_Store
+
+helm/charts/*
