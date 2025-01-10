@@ -2,3 +2,5 @@
  
  Configure this path to be used for githooks
 `git config core.hooksPath .githooks`
+
+It is a good idea to include unit tests into `pre-commit` hook.  
