@@ -1,6 +1,6 @@
 branches:
   - name: prod
-  - name: staging
+  - name: stg
     prerelease: true
 tagFormat: "${version}" # default is v${version} 
 plugins:
