@@ -92,6 +92,7 @@ jobs:
           fi
 
   build:
+    name: Build and push Docker image to ECR
     runs-on: ubuntu-latest
     needs: git-tag-release
     if: false  # Skip because this is a template
@@ -151,10 +152,15 @@ jobs:
       - name: Build and push Docker image to ECR
         uses: docker/build-push-action@v5
         with:
+          labels: |
+            org.opencontainers.image.image.source=${{ github.repositoryUrl }}
+          provenance: true
+          platforms: linux/amd64 # linux/amd64,linux/arm64
           push: true
           tags: ${{ env.DOCKER_TAGS }}
 
   deploy:
+    name: Deploy to Kubernetes
     runs-on: ubuntu-latest
     needs: build
     env:
@@ -178,7 +184,7 @@ jobs:
           ARGOCD_SERVER: ${{ vars.ARGOCD_SERVER }}
           ARGOCD_AUTH_TOKEN: ${{ secrets.ARGOCD_AUTH_TOKEN }}
           ARGOCD_OPTS: "--grpc-web"
-        Construction HTTPS_REPO_URL because ${{ github.repositoryUrl }} uses git:// protocol
+        # Construction HTTPS_REPO_URL because ${{ github.repositoryUrl }} uses git:// protocol
         run: |
           HTTPS_REPO_URL="https://github.com/${{ github.repository }}.git" 
           ARGOCD_APP=$(argocd app list --repo ${HTTPS_REPO_URL} --project ${{ github.ref_name }} --output name)
